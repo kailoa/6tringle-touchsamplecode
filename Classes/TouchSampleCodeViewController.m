@@ -27,8 +27,8 @@
 
 
 - (void)dealloc {
-    [TouchTimer invalidate];
-    TouchTimer = nil;
+    [TouchHoldTimer invalidate];
+    TouchHoldTimer = nil;
     [super dealloc];
 }
 
@@ -45,12 +45,24 @@
 /*********************************************************************/
 #pragma mark -
 #pragma mark ** Utilities **
-
-- (void)touchIsBeingHeld;
+- (void)touchIsBeingHeldAfterTapCount:(NSTimer *)timer;
 {
-    TouchAndHoldCounter += 1;
-    TouchAndHoldLabel.transform = CGAffineTransformRotate(TouchAndHoldLabel.transform, .1);
-    NSLog(@"Held for %d counts and %g seconds.", TouchAndHoldCounter, -1*[FirstTouchTime timeIntervalSinceNow]);
+    NSSet *touches = [timer userInfo];
+    NSInteger count = [[touches anyObject] tapCount];
+    NSTimeInterval hold_time = -1*[FirstTouchTime timeIntervalSinceNow];
+    if (count == 1) {
+        TouchAndHoldCounter += 1;
+        TapAndHoldView.transform = CGAffineTransformRotate(TapAndHoldView.transform, 0.1);
+        NSLog(@"Held for %d counts and %g seconds.", TouchAndHoldCounter, hold_time);
+        if (hold_time > HOLD_TIME_DELAY)
+            TapAndHoldWithDelayView.transform = CGAffineTransformRotate(TapAndHoldWithDelayView.transform, 0.1);
+            
+    }
+    else if (count == 2) {
+        DoubleTapAndHoldCounter += 1;
+        DoubleTapAndHoldView.transform = CGAffineTransformRotate(DoubleTapAndHoldView.transform, -0.1);
+        NSLog(@"Held for %d counts and %g seconds.", DoubleTapAndHoldCounter, -1*[DoubleTapTime timeIntervalSinceNow]);
+    }
 }
 
 /*********************************************************************/
@@ -63,27 +75,36 @@
 	//Start touch timer
     TouchAndHoldCounter = 0.0;
     FirstTouchTime = [[NSDate alloc] init];
-	TouchTimer = [NSTimer scheduledTimerWithTimeInterval:kTouchUpdateTimer
+	TouchHoldTimer = [NSTimer scheduledTimerWithTimeInterval:kTouchUpdateTimer
                                                   target:self
-                                                selector:@selector(touchIsBeingHeld) 
-                                                userInfo:nil 
+                                                selector:@selector(touchIsBeingHeldAfterTapCount:) 
+                                                userInfo:touches
                                                  repeats:YES];
+    if ([[touches anyObject] tapCount] == 2)
+        DoubleTapTime = [[NSDate alloc] init];
 }
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event 
 {
     METHOD_LOG;
 }
+- (void)cleanup;
+{
+    [TouchHoldTimer invalidate];
+    TouchHoldTimer = nil;
+    [FirstTouchTime release];
+    FirstTouchTime = nil;
+    [DoubleTapTime release];
+    DoubleTapTime = nil;
+}
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event 
 {    
     METHOD_LOG;
-    [TouchTimer invalidate];
-    TouchTimer = nil;
+    [self cleanup];
 }
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event 
 {
     METHOD_LOG;
-    [TouchTimer invalidate];
-    TouchTimer = nil;
+    [self cleanup];
 }
 
 @end

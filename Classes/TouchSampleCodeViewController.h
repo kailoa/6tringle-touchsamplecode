@@ -13,12 +13,19 @@
 #import <UIKit/UIKit.h>
 #import "MacroUtilities.h"
 
+#define HOLD_TIME_DELAY 1.0 //tap and hold delay time in seconds
+
 @interface TouchSampleCodeViewController : UIViewController 
 {
-    IBOutlet UILabel *TouchAndHoldLabel;
-	NSTimer *TouchTimer;
-    NSInteger TouchAndHoldCounter;
-    NSDate *FirstTouchTime;
+    IBOutlet UIView *TapAndHoldView;
+    IBOutlet UIView *TapAndHoldWithDelayView;
+	NSTimer *TouchHoldTimer;            ///< Main Timer
+    NSInteger TouchAndHoldCounter;      ///< Used for informational purposes only.
+    NSDate *FirstTouchTime;             ///< Array of vertices to be pushed around by the user
+
+    IBOutlet UIView *DoubleTapAndHoldView;
+    NSInteger DoubleTapAndHoldCounter;
+    NSDate *DoubleTapTime;
 }
 
 @end
