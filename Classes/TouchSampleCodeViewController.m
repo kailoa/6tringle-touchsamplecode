@@ -45,7 +45,7 @@
 /*********************************************************************/
 #pragma mark -
 #pragma mark ** Utilities **
-- (void)touchIsBeingHeldAfterTapCount:(NSTimer *)timer;
+- (void)touchIsBeingHeldWithTimer:(NSTimer *)timer;
 {
     NSSet *touches = [timer userInfo];
     NSInteger count = [[touches anyObject] tapCount];
@@ -77,7 +77,7 @@
     FirstTouchTime = [[NSDate alloc] init];
 	TouchHoldTimer = [NSTimer scheduledTimerWithTimeInterval:kTouchUpdateTimer
                                                   target:self
-                                                selector:@selector(touchIsBeingHeldAfterTapCount:) 
+                                                selector:@selector(touchIsBeingHeldWithTimer:) 
                                                 userInfo:touches
                                                  repeats:YES];
     if ([[touches anyObject] tapCount] == 2)
