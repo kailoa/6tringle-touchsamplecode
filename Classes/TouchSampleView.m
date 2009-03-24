@@ -6,7 +6,7 @@
  *  \brief Part of TouchSampleCode
  *  \details
  *
- *  \abstract STRACT 
+ *  \abstract Simple UIView subclass that forwards touch events to the view controller for processing 
  *  \copyright Copyright 2009 6Tringle LLC. All rights reserved.
  */
 
@@ -18,29 +18,13 @@
 @end
 
 @implementation TouchSampleView
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-#pragma mark ** Static Variables **
 
 /*********************************************************************/
 #pragma mark -
 #pragma mark ** Methods **
 
-- (id)initWithFrame:(CGRect)frame {
-    if (self = [super initWithFrame:frame]) {
-        // Initialization code
-    }
-    return self;
-}
 - (void)dealloc {
     [super dealloc];
-}
-
-/*********************************************************************/
-#pragma mark -
-#pragma mark ** UIView Methods **
-
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
 }
 
 /*********************************************************************/

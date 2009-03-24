@@ -1,10 +1,14 @@
-//
-//  TouchSampleCodeAppDelegate.m
-//  TouchSampleCode
-//
-//  Created by Kailoa Kadano on 2009/3/23.
-//  Copyright 6Tringle LLC 2009. All rights reserved.
-//
+/*********************************************************************
+ *  \file TouchSampleCodeAppDelegate.m
+ *  \author Kailoa Kadano
+ *  \date 2009/3/23
+ *  \class TouchSampleCodeAppDelegate
+ *  \brief Part of TouchSampleCode
+ *  \details
+ *
+ *  \abstract AppDelegate for TouchSampleCode 
+ *  \copyright Copyright 2009 6Tringle LLC. All rights reserved.
+ */
 
 #import "TouchSampleCodeAppDelegate.h"
 #import "TouchSampleCodeViewController.h"

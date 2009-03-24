@@ -1,15 +1,12 @@
-//
-//  MacroUtilities.h
-//
-//  Created by Kailoa Kadano on Mon Sep 22 2003.
-//  Copyright (c) 2003-2009
-//
-
-/*!
- *  @abstract     Miscellaneous convenience and utility macros and inline funcitons
- *  @discussion 
- *    Mostly used for debugging.
+/*********************************************************************
+ *  \file MacroUtilities.h
+ *  \author Kailoa Kadano
+ *  \date 2006/3/23
+ *  \brief Part of TouchSampleCode
+ *  \details
  *
+ *  \abstract Miscellaneous convenience and utility macros and inline funcitons
+ *  \copyright Copyright 2006-2009 6Tringle LLC. All rights reserved.
  */
 
 #import <Foundation/Foundation.h>
@@ -18,11 +15,11 @@
 #define NSNO [NSNumber numberWithBool:NO]
 
 #if !defined(DLOG)
-#define DLOG(object)    (NSLog(@""  #object @" %d",object ));
+#define DLOG(object)    (NSLog(@"" #object @" %d",object ));
 #endif
 
 #if !defined(FLOG)
-#define FLOG(object)    (NSLog(@""  #object @" %f",object ));
+#define FLOG(object)    (NSLog(@"" #object @" %f",object ));
 #endif
 
 #if !defined(OBJECT_LOG) //one argument
