@@ -31,7 +31,11 @@
 #pragma mark -
 #pragma mark ** Touch Handlers **
 
-//For the purpose of this sample code, we are just forwarding all the touch handlers to the view controller for processing.
+// For the purpose of this sample code, we are just forwarding all the touch 
+// handlers to the view controller for processing. This is not normal and 
+// actually breaks _some_ MVC patterns.  Conversely, in some apps, it makes 
+// sense to compartmentalize touch handling with the controllers.
+
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event 
 {
     [ViewController touchesBegan:touches withEvent:event];

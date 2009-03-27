@@ -17,15 +17,24 @@
 
 @interface TouchSampleCodeViewController : UIViewController 
 {
-    IBOutlet UIView *TapAndHoldView;
-    IBOutlet UIView *TapAndHoldWithDelayView;
-	NSTimer *TouchHoldTimer;            ///< Main Timer
-    NSInteger TouchAndHoldCounter;      ///< Used for informational purposes only.
-    NSDate *FirstTouchTime;             ///< Array of vertices to be pushed around by the user
+    // Tap and hold
+    IBOutlet UIView *TapAndHoldView;            ///< This view is rotated after when a user tap and holds.
+    IBOutlet UIView *TapAndHoldWithDelayView;   ///< This view is rotated after a short delay.
+	NSTimer *TouchHoldTimer;                    ///< Main Timer
+    NSInteger TouchAndHoldCounter;              ///< Used for informational purposes only.
+    NSDate *FirstTouchTime;                     ///< Used for informational purposes only.
 
-    IBOutlet UIView *DoubleTapAndHoldView;
-    NSInteger DoubleTapAndHoldCounter;
-    NSDate *DoubleTapTime;
+    // Double tap and hold
+    IBOutlet UIView *DoubleTapAndHoldView;      ///< This view is rotated after a double tap and hold.
+    NSInteger DoubleTapAndHoldCounter;          ///< Used for informational purposes only.
+    NSDate *DoubleTapTime;                      ///< Used for informational purposes only.
+
+    // Tracking All touches
+    NSMutableArray *ActiveTouches;              ///< Used to keep track of all current touches.
+    
+    // Pinch and Zoom
+    IBOutlet UIView *PinchAndStretchView;       ///< View to demo pinch and stretch.
+    CGSize OriginalDifference;                  ///< Used for calulating the relative difference between two multi-taps for pinch/strech and zoom/unzoom
 }
 
 @end

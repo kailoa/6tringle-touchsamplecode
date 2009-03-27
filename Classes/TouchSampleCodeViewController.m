@@ -13,6 +13,7 @@
 #import "TouchSampleCodeViewController.h"
 
 #define kTouchUpdateTimer (1.0/15.0)
+#define kRotateAngleInRadians 0.1
 
 @implementation TouchSampleCodeViewController
 
@@ -29,6 +30,9 @@
 - (void)dealloc {
     [TouchHoldTimer invalidate];
     TouchHoldTimer = nil;
+    [FirstTouchTime release];
+    [DoubleTapTime release];
+    [ActiveTouches release];
     [super dealloc];
 }
 
@@ -45,6 +49,29 @@
 /*********************************************************************/
 #pragma mark -
 #pragma mark ** Utilities **
+
+CGSize CGSizeDistanceBetween2Points(CGPoint point1, CGPoint point2)
+{
+    return CGSizeMake(point1.x -point2.x, point1.y - point2.y);
+}
+
+/*********************************************************************/
+#pragma mark -
+#pragma mark ** Touch Timer Methods **
+- (void)touchIsBeingPinchedOrStretched:(NSSet *)touches;
+{
+    // calculate the distance between the two touches    
+    CGSize difference = CGSizeDistanceBetween2Points([[ActiveTouches objectAtIndex:0] locationInView:self.view], 
+                                                       [[ActiveTouches objectAtIndex:1] locationInView:self.view]);    
+    CGFloat x_scale_factor = OriginalDifference.width/difference.width;
+    CGFloat y_scale_factor = OriginalDifference.height/difference.height;
+    NSLog(@"Scale Factor: %x:f, y:%f", x_scale_factor, y_scale_factor);
+    
+    // modify the transform in order to scale the view
+    PinchAndStretchView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 
+                                                           x_scale_factor, 
+                                                           y_scale_factor);
+}
 - (void)touchIsBeingHeldWithTimer:(NSTimer *)timer;
 {
     NSSet *touches = [timer userInfo];
@@ -52,17 +79,26 @@
     NSTimeInterval hold_time = -1*[FirstTouchTime timeIntervalSinceNow];
     if (count == 1) {
         TouchAndHoldCounter += 1;
-        TapAndHoldView.transform = CGAffineTransformRotate(TapAndHoldView.transform, 0.1);
-        NSLog(@"Held for %d counts and %g seconds.", TouchAndHoldCounter, hold_time);
+        TapAndHoldView.transform = CGAffineTransformRotate(TapAndHoldView.transform, kRotateAngleInRadians);
+//        NSLog(@"Held for %d counts and %g seconds.", TouchAndHoldCounter, hold_time);
         if (hold_time > HOLD_TIME_DELAY)
-            TapAndHoldWithDelayView.transform = CGAffineTransformRotate(TapAndHoldWithDelayView.transform, 0.1);
+            TapAndHoldWithDelayView.transform = CGAffineTransformRotate(TapAndHoldWithDelayView.transform, kRotateAngleInRadians);
             
     }
     else if (count == 2) {
         DoubleTapAndHoldCounter += 1;
-        DoubleTapAndHoldView.transform = CGAffineTransformRotate(DoubleTapAndHoldView.transform, -0.1);
-        NSLog(@"Held for %d counts and %g seconds.", DoubleTapAndHoldCounter, -1*[DoubleTapTime timeIntervalSinceNow]);
+        DoubleTapAndHoldView.transform = CGAffineTransformRotate(DoubleTapAndHoldView.transform, -1 * kRotateAngleInRadians);
+//        NSLog(@"Held for %d counts and %g seconds.", DoubleTapAndHoldCounter, -1*[DoubleTapTime timeIntervalSinceNow]);
     }
+}
+- (void)cleanupTimers;
+{
+    [TouchHoldTimer invalidate];
+    TouchHoldTimer = nil;
+    [FirstTouchTime release];
+    FirstTouchTime = nil;
+    [DoubleTapTime release];
+    DoubleTapTime = nil;
 }
 
 /*********************************************************************/
@@ -72,39 +108,65 @@
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event 
 {
     METHOD_LOG;
-	//Start touch timer
-    TouchAndHoldCounter = 0.0;
-    FirstTouchTime = [[NSDate alloc] init];
-	TouchHoldTimer = [NSTimer scheduledTimerWithTimeInterval:kTouchUpdateTimer
-                                                  target:self
-                                                selector:@selector(touchIsBeingHeldWithTimer:) 
-                                                userInfo:touches
-                                                 repeats:YES];
-    if ([[touches anyObject] tapCount] == 2)
-        DoubleTapTime = [[NSDate alloc] init];
+    OBJECT_LOG(touches);
+
+    // NSSet *touches is the set of touches that began now.  We want to 
+    // keep track of ALL touches, including touches that may have began 
+    // sometime ago.  We have our own NSMutableArray* ActiveTouches to 
+    // do so.
+    if (ActiveTouches == nil)
+        ActiveTouches = [[NSMutableArray alloc] init];
+    
+    for (UITouch *touch in touches) {
+        if (![ActiveTouches containsObject:touch])
+            [ActiveTouches addObject:touch];
+    }
+    
+    if ([ActiveTouches count] == 1) { //single touch
+        //Start touch timer
+        TouchAndHoldCounter = 0.0;
+        FirstTouchTime = [[NSDate alloc] init];
+        TouchHoldTimer = [NSTimer scheduledTimerWithTimeInterval:kTouchUpdateTimer
+                                                          target:self
+                                                        selector:@selector(touchIsBeingHeldWithTimer:) 
+                                                        userInfo:touches
+                                                         repeats:YES];
+        if ([[touches anyObject] tapCount] == 2)
+            DoubleTapTime = [[NSDate alloc] init];
+    } else if ([ActiveTouches count] == 2) { //two finger touch
+        OriginalDifference = CGSizeDistanceBetween2Points([[ActiveTouches objectAtIndex:0] locationInView:self.view], 
+                                                            [[ActiveTouches objectAtIndex:1] locationInView:self.view]);    
+    }
 }
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event 
 {
-    METHOD_LOG;
-}
-- (void)cleanup;
-{
-    [TouchHoldTimer invalidate];
-    TouchHoldTimer = nil;
-    [FirstTouchTime release];
-    FirstTouchTime = nil;
-    [DoubleTapTime release];
-    DoubleTapTime = nil;
+    if ([ActiveTouches count] == 1) { //single touch
+        // do nothing
+    } else if ([ActiveTouches count] == 2) { //two finger touch
+        [self cleanupTimers];
+        [self touchIsBeingPinchedOrStretched:touches];
+    }
 }
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event 
-{    
+{
     METHOD_LOG;
-    [self cleanup];
+    OBJECT_LOG(touches);
+    for (UITouch *touch in touches) {
+        [ActiveTouches removeObject:touch];
+    }
+    [self cleanupTimers];
+    
+    if ([touches count] == 1) { //single touch
+        // do nothing
+    } else if ([touches count] == 2) { //two finger touch
+        //
+    }        
 }
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event 
 {
     METHOD_LOG;
-    [self cleanup];
+    [self cleanupTimers];
+    [ActiveTouches removeAllObjects];
 }
 
 @end

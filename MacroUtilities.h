@@ -26,6 +26,18 @@
 #define OBJECT_LOG(object)    (NSLog(@""  #object @" %@",[object description] ));
 #endif
 
+#if !defined(POINTLOG) //one argument
+#define POINTLOG(point)    (NSLog(@""  #point @" x:%f y:%f", point.x, point.y ));
+#endif
+
+#if !defined(SIZELOG) //one argument
+#define SIZELOG(size)    (NSLog(@""  #size @" width:%f height:%f", size.width, size.height ));
+#endif
+
+#if !defined(RECTLOG) //one argument
+#define RECTLOG(rect)    (NSLog(@""  #rect @" x:%f y:%f w:%f h:%f", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height ));
+#endif
+
 #if !defined(SELECTOR_LOG) //No arguments
 #define SELECTOR_LOG    (NSLog(@"%@ in %s", NSStringFromSelector(_cmd), __FILE__));
 #endif
@@ -56,16 +68,4 @@
 
 #if !defined(MSG_ASSERT_TRUE) //two arguments, if the argument is false, raise the assert and display the message
 #define MSG_ASSERT_TRUE(test, msg)    NSAssert5(test, @"\n\n    ****  Unexpected Assertion  **** \nReason: %@\nAssertion in file:%s at line %i in Method %@ with object:\n %@", msg, __FILE__, __LINE__, NSStringFromSelector(_cmd), self)
-#endif
-
-#if !defined(POINTLOG) //one argument
-#define POINTLOG(point)    (NSLog(@""  #point @" x:%f y:%f", point.x, point.y ));
-#endif
-
-#if !defined(SIZELOG) //one argument
-#define SIZELOG(size)    (NSLog(@""  #size @" width:%f height:%f", size.width, size.height ));
-#endif
-
-#if !defined(RECTLOG) //one argument
-#define RECTLOG(rect)    (NSLog(@""  #rect @" x:%f y:%f w:%f h:%f", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height ));
 #endif
