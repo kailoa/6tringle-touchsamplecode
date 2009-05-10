@@ -57,7 +57,8 @@ CGSize CGSizeDistanceBetween2Points(CGPoint point1, CGPoint point2)
 
 /*********************************************************************/
 #pragma mark -
-#pragma mark ** Touch Timer Methods **
+#pragma mark ** Touch Utility Methods **
+
 - (void)touchIsBeingPinchedOrStretched:(NSSet *)touches;
 {
     // calculate the distance between the two touches    
@@ -72,6 +73,7 @@ CGSize CGSizeDistanceBetween2Points(CGPoint point1, CGPoint point2)
                                                            x_scale_factor, 
                                                            y_scale_factor);
 }
+
 - (void)touchIsBeingHeldWithTimer:(NSTimer *)timer;
 {
     NSSet *touches = [timer userInfo];

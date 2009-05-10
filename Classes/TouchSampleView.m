@@ -36,6 +36,21 @@
 // actually breaks _some_ MVC patterns.  Conversely, in some apps, it makes 
 // sense to compartmentalize touch handling with the controllers.
 
+- (id)forwardingTargetForSelector:(SEL)sel
+{
+    NSString *sel_string = NSStringFromSelector(sel);
+    if ([sel_string isEqualToString:@"touchesBegan:withEvent:"]
+        || [sel_string isEqualToString:@"touchesMoved:withEvent:"]
+        || [sel_string isEqualToString:@"touchesEnded:withEvent:"]
+        || [sel_string isEqualToString:@"touchesCancelled:withEvent:"])
+        return ViewController;
+    else
+        return (id)super;
+}
+
+
+//The above is roughly equivalent to the following "manual forwarding"
+/*
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event 
 {
     [ViewController touchesBegan:touches withEvent:event];
@@ -52,5 +67,6 @@
 {
     [ViewController touchesCancelled:touches withEvent:event];
 }
+*/
 
 @end
