@@ -6,4 +6,6 @@ Currently supporting Sample code for
 * DoubleTap and Hold
 * Multi-touch (two fingers) with simple pinch and stretch for zoom in and out
 
-<script language="javascript" src="http://tipjoy.com/custombutton?targetUser=kailoa&amount=1.00&targetUrl=http://github.com/kailoa/6tringle-touchsamplecode/tree/master&customMessage=Tips%20for%20TouchSampleCode&width=215&" ></script>
+Please consider tipping if you find this code useful.
+Tips can be left at 
+<http://6tringle.com/blog/2009/TouchSampleCode.html>
